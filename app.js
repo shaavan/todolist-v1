@@ -1,4 +1,7 @@
 const express = require("express");
+const date = require(__dirname + "/date.js");
+
+console.log(date());
 
 const app = express();
 
@@ -16,6 +19,7 @@ app.get("/", function(req, res) {
     let today = new Date();
     const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
     let date = today.toLocaleDateString("en-us", options);
+
     res.render("list", {listName: date, itemsListName: items});
 });
 
@@ -49,6 +53,10 @@ app.get("/work", function(req, res) {
 
 //     res.redirect("/work");
 // })
+
+app.get("/about", function(req, res) {
+    res.render("about")
+})
 
 app.listen(port, function() {
     console.log("Listening on port", port);
