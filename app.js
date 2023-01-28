@@ -1,7 +1,5 @@
 const express = require("express");
-const date = require(__dirname + "/date.js");
-
-console.log(date());
+const datefns = require(__dirname + "/date.js");
 
 const app = express();
 
@@ -9,23 +7,27 @@ app.use(express.urlencoded({extended: true}));
 app.use(express.static("public"));
 
 const port = process.env.PORT || 3000;
-let items = ["Buy Food", "Cook Food", "Eat Food"];
-let workItems = [];
+
+// Note: Though the arrays are being updated later in the file.
+// they can be changed to const. This is one of the quirks of js.
+// the const array variable cannot be assigned a completely new variable,
+// but the things inside the array can still be changed.
+
+const items = ["Buy Food", "Cook Food", "Eat Food"];
+const workItems = [];
 
 app.set('view engine', 'ejs');
 
 
 app.get("/", function(req, res) {
-    let today = new Date();
-    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
-    let date = today.toLocaleDateString("en-us", options);
+
+    let date = datefns.getDay();
 
     res.render("list", {listName: date, itemsListName: items});
 });
 
 app.post("/", function(req, res) {
     let item = req.body.item;
-    console.log(req.body);
 
     if(req.body.button === "Work") {
         workItems.push(item);
@@ -39,6 +41,20 @@ app.post("/", function(req, res) {
 app.get("/work", function(req, res) {
     res.render("list", {listName: "Work List", itemsListName: workItems});
 })
+
+app.get("/about", function(req, res) {
+    res.render("about")
+})
+
+app.listen(port, function() {
+    console.log("Listening on port", port);
+});
+
+
+
+
+
+///////////////////////////////////////////
 
 // The following post is not used right now.
 // The action on the list.ejs posts to the "/" path and not to the "/work",
@@ -54,10 +70,4 @@ app.get("/work", function(req, res) {
 //     res.redirect("/work");
 // })
 
-app.get("/about", function(req, res) {
-    res.render("about")
-})
-
-app.listen(port, function() {
-    console.log("Listening on port", port);
-});
+//////////////////////////////////////////
